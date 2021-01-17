@@ -9,7 +9,8 @@ import re
 
 
 # define the scraping function for otomoto.pl
-# function will only work if a search results link is passed in, i.e. "https://www.otomoto.pl/osobowe/hyundai/coupe/od-2006/"
+# function will only work if a search results link is passed in
+# i.e. "https://www.otomoto.pl/osobowe/hyundai/coupe/od-2006/"
 def scrape_otomoto(search_url: str = "https://www.otomoto.pl/osobowe/hyundai/coupe/od-2006/"):
     # access the link
     res = requests.get(search_url)
