@@ -1,5 +1,5 @@
 # import libraries
-import requests, re
+import requests
 import pandas as pd
 import numpy as np
 import bs4
