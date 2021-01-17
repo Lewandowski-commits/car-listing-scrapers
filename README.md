@@ -30,6 +30,6 @@ Import to use helpful utility functions when working with the scraped dataframes
     - allegro.pl
     - allegrolokalnie.pl
    - EU-wide
-    - mobile.de
-    - autoscout
-   - ...and more
+      - mobile.de
+      - autoscout
+    - ...and more
