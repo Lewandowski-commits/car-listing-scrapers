@@ -6,6 +6,7 @@ import bs4
 from bs4 import BeautifulSoup
 from pandas import DataFrame
 import re
+from datetime import datetime
 
 
 # define the scraping function for otomoto.pl
@@ -105,8 +106,9 @@ def scrape_otomoto(search_url: str = "https://www.otomoto.pl/osobowe/hyundai/cou
 
 
 if __name__ == "__main__":
+    currtime = datetime.now().strftime('D%d-%m-%Y T%H-%M-%S')
     try:
-        print(scrape_otomoto())
+        scrape_otomoto(input("Please provide a search link: ")).to_csv(f"data/{currtime}.csv", index=False)
         print("Success!")
     except:
         print("Failed!")
