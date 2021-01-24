@@ -165,7 +165,7 @@ def scrape_olx(search_url: str = "https://www.olx.pl/motoryzacja/samochody/hyund
             d['currency'].append("PLN")
 
             d['city'].append(
-                car.find('i', {"data-icon": "location-filled"}).text)
+                car.find_all("tr")[-1].find('span').text)
 
         print('Parsed page {} of {} olx.pl'.format(str(page), str(lastPage)))
 
