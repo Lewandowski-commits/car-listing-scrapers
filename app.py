@@ -2,13 +2,14 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
+import dash_bootstrap_components as dbc
 import plotly.express as px
 
 import pandas as pd
 
 df = pd.read_csv('data/D07-02-2021 T15-32-44.csv')
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+external_stylesheets = [dbc.themes.BOOTSTRAP]
 
 def generate_table(dataframe, max_rows=10):
     return html.Table([
@@ -25,12 +26,14 @@ def generate_table(dataframe, max_rows=10):
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.layout = html.Div([
-    dcc.Dropdown(id="slct-year",
-                 options=[{"label": str(int(item)), "value": int(item)} for item in df["year"].dropna().sort_values().unique()],
-                 multi=False,
-                 value=df["year"].max()),
+    dbc.Row([
+        dbc.Col(dcc.Dropdown(id="slct-year",
+                     options=[{"label": str(int(item)), "value": int(item)} for item in df["year"].dropna().sort_values().unique()],
+                     multi=False,
+                     value=df["year"].max()), width=1),
 
-    html.Div(id="table-id")
+        dbc.Col(html.Div(id="table-id"), width=11)
+    ])
 ])
 
 
