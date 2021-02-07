@@ -14,7 +14,7 @@ external_stylesheets = [dbc.themes.MINTY]
 def generate_table(dataframe, max_rows=10):
     return html.Table([
         html.Thead(
-            html.Tr([html.Th(col) for col in dataframe.columns])
+            html.Tr([html.Th(col, style={"scope": "col"}) for col in dataframe.columns], style={"class": "table-active"})
         ),
         html.Tbody([
             html.Tr([
@@ -59,7 +59,7 @@ app.layout = html.Div([
         dbc.Col([
             html.H3("Data visualisation"),
             dcc.Graph(id="fig1")
-        ])
+        ], width=6)
     ]),
 
     dbc.Row([
@@ -79,13 +79,17 @@ app.layout = html.Div([
     Input('slct-year', 'value'),
     Input("slct-disp", "value"))
 def update_figure(selected_year, selected_disp):
-    dff = df[(df["year"] >= selected_year[0]) & (df["year"] <= selected_year[1])]
+    dff = df[(df["year"] >= selected_year[0]) & (df["year"] <= selected_year[1])].dropna()
 
     table = generate_table(dff, max_rows=20)
     disp_slicer_text = f"Chosen range: {selected_disp} (cm3)"
     year_slicer_text = f"Chosen range: {selected_year}"
     
-    fig1 = px.scatter(dff, x="price", y="mileage (km)", color="fuel type")
+    fig1 = px.scatter(dff,
+                      x="price",
+                      y="mileage (km)",
+                      color="fuel type",
+                      size=dff["disp (cm3)"])
 
     fig1.update_layout(transition_duration=500)
 
