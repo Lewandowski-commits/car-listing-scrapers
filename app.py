@@ -9,7 +9,7 @@ import pandas as pd
 
 df = pd.read_csv('data/D07-02-2021 T15-32-44.csv')
 
-external_stylesheets = [dbc.themes.BOOTSTRAP]
+external_stylesheets = [dbc.themes.CYBORG]
 
 def generate_table(dataframe, max_rows=10):
     return html.Table([
