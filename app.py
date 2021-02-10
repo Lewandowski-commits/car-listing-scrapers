@@ -58,8 +58,43 @@ app.layout = html.Div([
     dbc.Row([
         dbc.Col([
             html.H3("Data visualisation"),
+            html.Label("X axis"),
+            dcc.Dropdown(options=[
+                {'label': 'Displacement', 'value': 'disp (cm3)'},
+                {'label': 'Price', 'value': 'price'},
+                {'label': 'Mileage', 'value': 'mileage (km)'},
+                {'label': 'Year', 'value': 'year'}
+            ],
+            id="fig1-x-dropdown",
+            value="price"),
+
+            html.Br(),
+            html.Label("Y axis"),
+            dcc.Dropdown(options=[
+                {'label': 'Displacement', 'value': 'disp (cm3)'},
+                {'label': 'Price', 'value': 'price'},
+                {'label': 'Mileage', 'value': 'mileage (km)'},
+                {'label': 'Year', 'value': 'year'}
+            ],
+            id="fig1-y-dropdown",
+            value = "mileage (km)"
+            ),
+
+            html.Br(),
+            html.Label("Colors"),
+            dcc.Dropdown(options=[
+                {'label': 'Fuel type', 'value': 'fuel type'},
+                {'label': 'City', 'value': 'city'},
+                {'label': 'Year', 'value': 'year'}
+            ],
+            id="fig1-colors-dropdown",
+            value = "fuel type"
+            )
+        ], width=3),
+
+        dbc.Col([
             dcc.Graph(id="fig1")
-        ], width=6)
+        ], width=9)
     ]),
 
     dbc.Row([
@@ -77,19 +112,22 @@ app.layout = html.Div([
     Output("year-slicer-val", "children"),
     Output("fig1", "figure"),
     Input('slct-year', 'value'),
-    Input("slct-disp", "value"))
-def update_figure(selected_year, selected_disp):
+    Input("slct-disp", "value"),
+    Input('fig1-x-dropdown', 'value'),
+    Input('fig1-y-dropdown', 'value'),
+    Input('fig1-colors-dropdown', 'value'))
+def update_figure(selected_year, selected_disp, selected_x_fig1, selected_y_fig1, selected_colors_fig1):
     dff = df[(df["year"] >= selected_year[0]) & (df["year"] <= selected_year[1])].dropna()
+    dff = dff[(dff["disp (cm3)"] >= selected_disp[0]) & (dff["disp (cm3)"] <= selected_disp[1])]
 
     table = generate_table(dff, max_rows=20)
     disp_slicer_text = f"Chosen range: {selected_disp} (cm3)"
     year_slicer_text = f"Chosen range: {selected_year}"
     
     fig1 = px.scatter(dff,
-                      x="price",
-                      y="mileage (km)",
-                      color="fuel type",
-                      size=dff["disp (cm3)"])
+                      x=selected_x_fig1,
+                      y=selected_y_fig1,
+                      color=selected_colors_fig1)
 
     fig1.update_layout(transition_duration=500)
 
@@ -97,4 +135,4 @@ def update_figure(selected_year, selected_disp):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
