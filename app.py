@@ -7,7 +7,7 @@ import plotly.express as px
 
 import pandas as pd
 
-df = pd.read_csv('data/D07-02-2021 T15-32-44.csv')
+df = pd.read_csv('data/data.csv')
 
 external_stylesheets = [dbc.themes.MINTY]
 
