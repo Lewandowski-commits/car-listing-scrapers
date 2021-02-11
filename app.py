@@ -127,7 +127,10 @@ def update_figure(selected_year, selected_disp, selected_x_fig1, selected_y_fig1
     fig1 = px.scatter(dff,
                       x=selected_x_fig1,
                       y=selected_y_fig1,
-                      color=selected_colors_fig1)
+                      color=selected_colors_fig1,
+                      marginal_y="violin",
+                      marginal_x="box",
+                      template="simple_white")
 
     fig1.update_layout(transition_duration=500)
 
