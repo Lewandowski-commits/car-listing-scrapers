@@ -9,12 +9,13 @@ import plotly.express as px
 import pandas as pd
 
 df = pd.read_csv('data/data.csv')
+df['link'] = df['link'].apply(lambda x: f'[Link]({x})')
 
 external_stylesheets = [dbc.themes.MINTY]
 
 def generate_table(dataframe):
     return dash_table.DataTable(id='data-table',
-                                columns=[{'name': i, 'id': i} for i in dataframe.columns],
+                                columns=[{'name': i, 'id': i, 'presentation': 'markdown'} if i == 'link' else {'name': i, 'id': i} for i in dataframe.columns],
                                 data=dataframe.to_dict('records'),
                                 sort_action="native",
                                 sort_mode="multi",
@@ -22,11 +23,6 @@ def generate_table(dataframe):
                                 page_current=0,
                                 page_size=10,
                                 style_as_list_view=True,
-                                style_header={'backgroundColor': 'rgb(30, 30, 30)'},
-                                style_cell={
-                                    'backgroundColor': 'rgb(50, 50, 50)',
-                                    'color': 'white'
-                                    },
                                 )
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -36,7 +32,7 @@ app.layout = html.Div([
         dbc.Col([
             html.H1("Car Listing Agreggator"),
             html.H2("Scrape listings from otomoto.pl and olx.pl and compare!"),
-            html.P('This Dash web app allows you to visualise the underlying data pulled using <a href="https://github.com/Lewandowski-commits">my Github repo</a>.'),
+            html.P(['This Dash web app allows you to visualise the underlying data pulled using ', html.A('my GitHub repo', href="https://github.com/Lewandowski-commits"),'.']),
             html.Br(),
             html.H3("Filters pane")
         ])
