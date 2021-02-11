@@ -51,7 +51,7 @@ app.layout = html.Div([
                             min=df["disp (cm3)"].min(),
                             max=df["disp (cm3)"].max(),
                             step=100,
-                            value=[df["disp (cm3)"].min(), df["disp (cm3)"].max()]),
+                            value=[df["disp (cm3)"].min(), df["disp (cm3)"].median()]),
             html.P(id="disp-slicer-val")], width=2)
     ]),
 
@@ -135,4 +135,4 @@ def update_figure(selected_year, selected_disp, selected_x_fig1, selected_y_fig1
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
