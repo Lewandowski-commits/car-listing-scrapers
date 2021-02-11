@@ -3,6 +3,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
+import dash_table
 import plotly.express as px
 
 import pandas as pd
@@ -11,17 +12,22 @@ df = pd.read_csv('data/data.csv')
 
 external_stylesheets = [dbc.themes.MINTY]
 
-def generate_table(dataframe, max_rows=10):
-    return html.Table([
-        html.Thead(
-            html.Tr([html.Th(col, style={"scope": "col"}) for col in dataframe.columns], style={"class": "table-active"})
-        ),
-        html.Tbody([
-            html.Tr([
-                html.Td(dataframe.iloc[i][col]) for col in dataframe.columns
-            ]) for i in range(min(len(dataframe), max_rows))
-        ])
-    ], style={"class": "table table-hover"})
+def generate_table(dataframe):
+    return dash_table.DataTable(id='data-table',
+                                columns=[{'name': i, 'id': i} for i in dataframe.columns],
+                                data=dataframe.to_dict('records'),
+                                sort_action="native",
+                                sort_mode="multi",
+                                page_action="native",
+                                page_current=0,
+                                page_size=10,
+                                style_as_list_view=True,
+                                style_header={'backgroundColor': 'rgb(30, 30, 30)'},
+                                style_cell={
+                                    'backgroundColor': 'rgb(50, 50, 50)',
+                                    'color': 'white'
+                                    },
+                                )
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
@@ -120,7 +126,7 @@ def update_figure(selected_year, selected_disp, selected_x_fig1, selected_y_fig1
     dff = df[(df["year"] >= selected_year[0]) & (df["year"] <= selected_year[1])].dropna()
     dff = dff[(dff["disp (cm3)"] >= selected_disp[0]) & (dff["disp (cm3)"] <= selected_disp[1])]
 
-    table = generate_table(dff, max_rows=20)
+    table = generate_table(dff)
     disp_slicer_text = f"Chosen range: {selected_disp} (cm3)"
     year_slicer_text = f"Chosen range: {selected_year}"
     
