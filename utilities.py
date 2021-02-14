@@ -1,6 +1,6 @@
 import pandas as pd
 import re
-import Polish
+import scrapers
 
 
 # function that when provided a dataframe, parses engine capacities from the dataframe series that contain their names
@@ -54,6 +54,6 @@ def car_makes():
            "Porsche"]
 
 if __name__ == "__main__":
-    data = Polish.scrape_otomoto()
+    data = scrapers.scrape_otomoto()
     print(parse_engine_capacities_from_names(data))
     print(parse_makes_and_models_from_names(data))
