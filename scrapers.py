@@ -6,7 +6,7 @@ import bs4
 from bs4 import BeautifulSoup
 from pandas import DataFrame
 import re
-from datetime import datetime
+from _datetime import datetime as datetime
 
 
 # define the scraping function for otomoto.pl
