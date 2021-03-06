@@ -207,46 +207,43 @@ def scrape_mobile(search_url: str = "https://suchen.mobile.de/fahrzeuge/search.h
     ### this is the point where shit breaks ###
 
     # Loop over all the pages, load them, get the list of all car
-    for page in range(1, lastPage):
+    for page in range(1, lastPage+1):
         # check if the links need to be modified when looping over
         if lastPage >= 2:
             res = requests.get(search_url + '&pageNumber=' + str(page), headers=headers)
-            print("if ok")
         else:
             res = requests.get(search_url, headers=headers)
-            print("else ok")
-
         # access the link
         res.raise_for_status()
 
         # create the BS object and select all listings
         currentPage = BeautifulSoup(res.text, features='lxml')
-        carList = currentPage.select('link--muted no--text--decoration result-item')
+        carList = currentPage.findAll('a', class_='link--muted no--text--decoration result-item')
 
-        print(carList)
-
+        mobilede_fuel_types = "Benzin|Diesel|Elektro|Elektro|Benzin/Elektro|Diesel / Elektro|LPG|CNG|Wasserstoff|Andere"
         # loop over all  listings on the page
         for car in carList:
-
             # scrape as much information from the listings as possible and put them in the dictionary
-            reg_mil_pow = car.find('div', class_='rbt-regMilPow').split(',')
-            print(reg_mil_pow)
+            name = car.find('span', class_='h3 u-text-break-word').text
+            reg_mil_pow = car.find('div', class_='rbt-regMilPow').text.split(',')
+            reg_mil_pow_sibling = car.find('div', class_='rbt-regMilPow').find_next_sibling('div').text
+
             d['name'].append(
-                car.find('span', class_='h3 u-text-break-word').text)
+                name)
 
             d['year'].append(
-                int(reg_mil_pow[0].split("/")[-1].text))
+                int(reg_mil_pow[0].split("/")[-1]))
 
             d['link'].append(
                 car['href'])
 
+            price_currency = car.find('div', class_='price-block u-margin-bottom-9').find('span').text.split(u'\xa0')
+
             d['price'].append(
-                float(car.find('span', class_='offer-price__number ds-price-number').find('span').text.replace(' ',
-                                                                                                               '').replace(
-                    ',', '.')))
+                float(price_currency[0].replace('.', '')))
 
             d['currency'].append(
-                car.find('span', class_='offer-price__currency ds-price-currency').text)
+                price_currency[-1])
 
             # mileage isn't a mandatory field to fill, so check if it's present and then append as necessary
             if isinstance(car.find('li', {'data-code': 'mileage'}), bs4.element.Tag):
@@ -256,7 +253,7 @@ def scrape_mobile(search_url: str = "https://suchen.mobile.de/fahrzeuge/search.h
                 d['mileage (km)'].append(np.NaN)
 
             d['fuel type'].append(
-                car.find('li', {'data-code': 'fuel_type'}).text.replace('\n', ''))
+                re.search(mobilede_fuel_types, reg_mil_pow_sibling).group())
 
             # displacement isn't a mandatory field to fill, so check if it's present and then append as necessary
             if isinstance(car.find('li', {'data-code': 'engine_capacity'}), bs4.element.Tag):
@@ -266,7 +263,7 @@ def scrape_mobile(search_url: str = "https://suchen.mobile.de/fahrzeuge/search.h
                 d['disp (cm3)'].append(np.NaN)
 
             d['city'].append(
-                car.find('span', class_='ds-location-city').text)
+                car.find_all('div', class_='g-col-12')[-1].text)
 
         print('Parsed page {} of {} mobile.de'.format(str(page), str(lastPage)))
 
@@ -280,7 +277,7 @@ def scrape_mobile(search_url: str = "https://suchen.mobile.de/fahrzeuge/search.h
 if __name__ == "__main__":
     currtime = datetime.now().strftime('D%d-%m-%Y T%H-%M-%S')
 
-    print(scrape_mobile())
+    scrape_mobile("https://suchen.mobile.de/fahrzeuge/search.html?dam=0&fr=2008%3A&isSearchRequest=true&ms=11600%3B4%3B%3B%3B&s=Car&sfmr=false&vc=Car").to_csv(f"data/{currtime}.csv", index=False)
     # try:
     #     joint_results = scrape_otomoto(input("Please provide otomoto.pl search results link: ")).append(
     #         scrape_olx(input("Please provide olx.pl search results link: "))
