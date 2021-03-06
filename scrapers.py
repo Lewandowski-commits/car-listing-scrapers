@@ -229,6 +229,8 @@ def scrape_mobile(search_url: str = "https://suchen.mobile.de/fahrzeuge/search.h
             reg_mil_pow = car.find('div', class_='rbt-regMilPow').text.split(',')
             reg_mil_pow_sibling = car.find('div', class_='rbt-regMilPow').find_next_sibling('div').text
 
+            print(reg_mil_pow)
+
             d['name'].append(
                 name)
 
@@ -246,19 +248,14 @@ def scrape_mobile(search_url: str = "https://suchen.mobile.de/fahrzeuge/search.h
             d['currency'].append(
                 price_currency[-1])
 
-            # mileage isn't a mandatory field to fill, so check if it's present and then append as necessary
-            if isinstance(car.find('li', {'data-code': 'mileage'}), bs4.element.Tag):
-                d['mileage (km)'].append(
-                    int(re.sub('[^0-9]', '', car.find('li', {'data-code': 'mileage'}).text)))
-            else:
-                d['mileage (km)'].append(np.NaN)
+            d['mileage (km)'].append(int(
+                reg_mil_pow[1].replace(u'\xa0km', '').replace('.', '')))
 
             d['fuel type'].append(
                 re.search(mobilede_fuel_types, reg_mil_pow_sibling).group())
 
-            # displacement isn't a mandatory field to fill, so check if it's present and then append as necessary
             d['disp (cm3)'].append(float(
-                re.search("([0-9][,|\.][0-9])", name).group().replace(",", ".")))
+                re.search('([0-9][,|\.][0-9])', name).group().replace(",", ".")))
 
             d['city'].append(
                 car.find_all('div', class_='g-col-12')[-1].text)
