@@ -268,17 +268,27 @@ def scrape_mobile(search_url: str = "https://suchen.mobile.de/fahrzeuge/search.h
 
     return df_mobile
 
-if __name__ == "__main__":
+def smart_scrape(search_url: str):
+    regexp = re.compile(r'mobile\.de|otomoto\.pl|olx\.pl')
+
+    if not regexp.search(search_url):
+        raise Exception('Unsupported URL provided')
+    else:
+        result = regexp.search(search_url).group()
+
+        if result == 'otomoto.pl':
+            return scrape_otomoto(search_url)
+        elif result == 'olx.pl':
+            return scrape_olx(search_url)
+        elif result == 'mobile.de':
+            return scrape_mobile(search_url)
+        else:
+            raise Exception('No sufficient function to support provided URL despite being mapped in')
+
+
+if __name__ != "__main__":
+    pass
+else:
     currtime = datetime.now().strftime('D%d-%m-%Y T%H-%M-%S')
 
-    scrape_mobile("https://suchen.mobile.de/fahrzeuge/search.html?dam=0&fr=2008%3A&isSearchRequest=true&ms=11600%3B4%3B%3B%3B&s=Car&sfmr=false&vc=Car").to_csv(f"data/{currtime}.csv", index=False)
-    # try:
-    #     joint_results = scrape_otomoto(input("Please provide otomoto.pl search results link: ")).append(
-    #         scrape_olx(input("Please provide olx.pl search results link: "))
-    #     )
-    #     joint_results.to_csv(f"data/{currtime}.csv", index=False)
-    #     print("Success!")
-    # except:
-    #     print("Failed!")
-    # finally:
-    #     print("Exiting!")
+    smart_scrape(input("Please enter the URL to scrape listings from: ")).to_csv(f"data/{currtime}.csv", index=False)
