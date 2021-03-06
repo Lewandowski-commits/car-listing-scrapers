@@ -228,8 +228,7 @@ def scrape_mobile(search_url: str = "https://suchen.mobile.de/fahrzeuge/search.h
             name = car.find('span', class_='h3 u-text-break-word').text
             reg_mil_pow = car.find('div', class_='rbt-regMilPow').text.split(',')
             reg_mil_pow_sibling = car.find('div', class_='rbt-regMilPow').find_next_sibling('div').text
-
-            print(reg_mil_pow)
+            city = car.find_all('div', class_='g-col-12')[-1].text
 
             d['name'].append(
                 name)
@@ -258,7 +257,7 @@ def scrape_mobile(search_url: str = "https://suchen.mobile.de/fahrzeuge/search.h
                 re.search('([0-9][,|\.][0-9])', name).group().replace(",", ".")))
 
             d['city'].append(
-                car.find_all('div', class_='g-col-12')[-1].text)
+                re.search('(DE-[0-9]+[^,]*)', city).group())
 
         print('Parsed page {} of {} mobile.de'.format(str(page), str(lastPage)))
 
