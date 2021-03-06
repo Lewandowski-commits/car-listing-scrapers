@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from pandas import DataFrame
 import re
 from _datetime import datetime as datetime
+import pprint
 
 
 # define the scraping function for otomoto.pl
@@ -256,11 +257,8 @@ def scrape_mobile(search_url: str = "https://suchen.mobile.de/fahrzeuge/search.h
                 re.search(mobilede_fuel_types, reg_mil_pow_sibling).group())
 
             # displacement isn't a mandatory field to fill, so check if it's present and then append as necessary
-            if isinstance(car.find('li', {'data-code': 'engine_capacity'}), bs4.element.Tag):
-                d['disp (cm3)'].append(float((
-                    re.sub('(\n)|(cm3)|', '', car.find('li', {'data-code': 'engine_capacity'}).text.replace(' ', '')))))
-            else:
-                d['disp (cm3)'].append(np.NaN)
+            d['disp (cm3)'].append(float(
+                re.search("([0-9][,|\.][0-9])", name).group().replace(",", ".")))
 
             d['city'].append(
                 car.find_all('div', class_='g-col-12')[-1].text)
