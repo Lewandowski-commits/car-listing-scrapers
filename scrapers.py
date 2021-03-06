@@ -250,11 +250,17 @@ def scrape_mobile(search_url: str = "https://suchen.mobile.de/fahrzeuge/search.h
             d['mileage (km)'].append(int(
                 reg_mil_pow[1].replace(u'\xa0km', '').replace('.', '')))
 
-            d['fuel type'].append(
-                re.search(mobilede_fuel_types, reg_mil_pow_sibling).group())
+            try:
+                d['fuel type'].append(
+                    re.search(mobilede_fuel_types, reg_mil_pow_sibling).group())
+            except:
+                d['fuel type'].append(np.NaN)
 
-            d['disp (cm3)'].append(float(
-                re.search('([0-9][,|\.][0-9])', name).group().replace(",", ".")))
+            try:
+                d['disp (cm3)'].append(float(
+                    re.search('([0-9][,|\.][0-9])', name).group().replace(",", ".")))
+            except:
+                d['disp (cm3)'].append(np.NaN)
 
             d['city'].append(
                 re.search('(DE-[0-9]+[^,]*)', city).group())
