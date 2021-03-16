@@ -106,7 +106,8 @@ def scrape_otomoto(search_url: str = "https://www.otomoto.pl/osobowe/hyundai/cou
     return df_otomoto
 
 
-def scrape_olx(search_url: str = "https://www.olx.pl/motoryzacja/samochody/hyundai/coupe/?search%5Bfilter_float_year%3Afrom%5D=2006&view=list"):
+def scrape_olx(
+        search_url: str = "https://www.olx.pl/motoryzacja/samochody/hyundai/coupe/?search%5Bfilter_float_year%3Afrom%5D=2006&view=list"):
     # access the link
     res = requests.get(search_url)
     res.raise_for_status()
@@ -151,7 +152,6 @@ def scrape_olx(search_url: str = "https://www.olx.pl/motoryzacja/samochody/hyund
 
         # loop over all  listings on the page
         for car in carList:
-
             # scrape as much information from the listings as possible and put them in the dictionary
 
             d['name'].append(
@@ -177,9 +177,12 @@ def scrape_olx(search_url: str = "https://www.olx.pl/motoryzacja/samochody/hyund
 
     return df_olx
 
-def scrape_mobile(search_url: str = "https://suchen.mobile.de/fahrzeuge/search.html?dam=0&fr=2006%3A&isSearchRequest=true&ms=11600%3B4%3B%3B%3B&s=Car&sfmr=false&vc=Car"):
-    #since headers are required to get past security, define some
-    headers = {'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'}
+
+def scrape_mobile(
+        search_url: str = "https://suchen.mobile.de/fahrzeuge/search.html?dam=0&fr=2006%3A&isSearchRequest=true&ms=11600%3B4%3B%3B%3B&s=Car&sfmr=false&vc=Car"):
+    # since headers are required to get past security, define some
+    headers = {
+        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'}
 
     # access the link
     res = requests.get(search_url, headers=headers)
@@ -208,7 +211,7 @@ def scrape_mobile(search_url: str = "https://suchen.mobile.de/fahrzeuge/search.h
     ### this is the point where shit breaks ###
 
     # Loop over all the pages, load them, get the list of all car
-    for page in range(1, lastPage+1):
+    for page in range(1, lastPage + 1):
         # check if the links need to be modified when looping over
         if lastPage >= 2:
             res = requests.get(search_url + '&pageNumber=' + str(page), headers=headers)
@@ -273,6 +276,7 @@ def scrape_mobile(search_url: str = "https://suchen.mobile.de/fahrzeuge/search.h
     df_mobile.drop_duplicates(inplace=True)
 
     return df_mobile
+
 
 def smart_scrape(search_url: str):
     regexp = re.compile(r'mobile\.de|otomoto\.pl|olx\.pl')
