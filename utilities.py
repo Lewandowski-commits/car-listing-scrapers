@@ -19,7 +19,7 @@ def parse_makes_and_models_from_names(data: pd.DataFrame,
                                       name_col: str = "name",
                                       make_col: str = "make",
                                       model_col: str = "model"):
-    data[make_col] = data[name_col].apply(lambda x: x])
+    data[make_col] = data[name_col].apply(lambda x: x)
     return data
 
 def car_makes():
